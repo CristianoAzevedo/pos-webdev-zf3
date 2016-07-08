@@ -1,6 +1,8 @@
 <?php
 namespace Application\Service;
 
+use Zend\Authentication\AuthenticationService;
+
 class Auth
 {
     private $request;
@@ -14,21 +16,13 @@ class Auth
 
     public function isAuthorized()
     {
-        if(! $this->request->getHeader('authorization')){
-            throw new \Exception("Not authorized", 401);
+        $auth = new AuthenticationService();
+        
+        if ($auth->hasIdentity()) {
+            return true;
         }
 
-        if (!$this->isValid()) {
-            throw new \Exception("Not authorized", 403);
-        }
-
-        return true;
+        return false;
     }
 
-    private function isValid()
-    {
-        $token = $this->request->getHeader('authorization');
-        //validar o token de alguma forma...
-        return true;
-    }
 }

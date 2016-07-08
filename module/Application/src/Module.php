@@ -33,11 +33,11 @@ class Module
         $moduleName = $routeMatch->getParam('module');
         $controllerName = $routeMatch->getParam('controller');
         $actionName = $routeMatch->getParam('action');
-        if ($controllerName == 'Application\Controller\BeerController' && $actionName == 'delete') {
+        if ($controllerName == 'Application\Controller\BeerController') {
             $authService = $event->getApplication()->getServiceManager()->get('Application\Service\Auth');
             if (! $authService->isAuthorized()) {
                 $redirect = $event->getTarget()->redirect();
-                $redirect->toUrl('/');
+                $redirect->toUrl('/login');
             }
         }
 

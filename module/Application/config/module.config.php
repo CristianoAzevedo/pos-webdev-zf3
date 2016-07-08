@@ -17,34 +17,54 @@ return [
             'home' => [
                 'type' => Literal::class,
                 'options' => [
-                    'route'    => '/',
+                    'route' => '/',
                     'defaults' => [
                         'controller' => Controller\IndexController::class,
-                        'action'     => 'index',
+                        'action' => 'index',
                     ],
                 ],
             ],
             'application' => [
-                'type'    => Segment::class,
+                'type' => Segment::class,
                 'options' => [
-                    'route'    => '/application[/:action]',
+                    'route' => '/application[/:action]',
                     'defaults' => [
-                        'controller'    => Controller\IndexController::class,
-                        'action'        => 'index',
+                        'controller' => Controller\IndexController::class,
+                        'action' => 'index',
                     ],
                 ],
             ],
             'beer' => [
-                'type'    => Segment::class,
+                'type' => Segment::class,
                 'options' => [
-                    'route'    => '/beer[/][:action][/:id]',
+                    'route' => '/beer[/][:action][/:id]',
                     'constraints' => [
                         'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                        'id'     => '[0-9]+',
+                        'id' => '[0-9]+',
                     ],
                     'defaults' => [
                         'controller' => Controller\BeerController::class,
-                        'action'     => 'index',
+                        'action' => 'index',
+                    ],
+                ],
+            ],
+            'login' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/login',
+                    'defaults' => [
+                        'controller' => Controller\LoginController::class,
+                        'action' => 'index',
+                    ],
+                ],
+            ],
+            'logout' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/logout',
+                    'defaults' => [
+                        'controller' => Controller\LoginController::class,
+                        'action' => 'logout',
                     ],
                 ],
             ],
@@ -53,10 +73,15 @@ return [
     'controllers' => [
         'factories' => [
             Controller\IndexController::class => InvokableFactory::class,
-            Controller\BeerController::class => function(\Interop\Container\ContainerInterface $container, $requestedName) {
+            Controller\BeerController::class => function (\Interop\Container\ContainerInterface $container, $requestedName) {
                 $tableGateway = $container->get('Application\Model\Beer\TableGateway');
-                $cache = $container->get('Application\Service\Cache');
-                $controller = new Controller\BeerController($tableGateway, $cache);
+                $controller = new Controller\BeerController($tableGateway);
+
+                return $controller;
+            },
+            Controller\LoginController::class => function (\Interop\Container\ContainerInterface $container, $requestedName) {
+                $tableGateway = $container->get('Application\Model\Login\TableGateway');
+                $controller = new Controller\LoginController($tableGateway);
 
                 return $controller;
             },
@@ -64,15 +89,15 @@ return [
     ],
     'view_manager' => [
         'display_not_found_reason' => true,
-        'display_exceptions'       => true,
-        'doctype'                  => 'HTML5',
-        'not_found_template'       => 'error/404',
-        'exception_template'       => 'error/index',
+        'display_exceptions' => true,
+        'doctype' => 'HTML5',
+        'not_found_template' => 'error/404',
+        'exception_template' => 'error/index',
         'template_map' => [
-            'layout/layout'           => __DIR__ . '/../view/layout/layout.phtml',
+            'layout/layout' => __DIR__ . '/../view/layout/layout.phtml',
             'application/index/index' => __DIR__ . '/../view/application/index/index.phtml',
-            'error/404'               => __DIR__ . '/../view/error/404.phtml',
-            'error/index'             => __DIR__ . '/../view/error/index.phtml',
+            'error/404' => __DIR__ . '/../view/error/404.phtml',
+            'error/index' => __DIR__ . '/../view/error/index.phtml',
         ],
         'template_path_stack' => [
             __DIR__ . '/../view',

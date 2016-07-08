@@ -7,22 +7,15 @@ use Zend\View\Model\ViewModel;
 class BeerController extends AbstractActionController
 {
     public $tableGateway;
-    public $cache;
 
-    public function __construct($tableGateway, $cache)
+    public function __construct($tableGateway)
     {
         $this->tableGateway = $tableGateway;
-        $this->cache = $cache;
     }
 
     public function indexAction()
     {
-        $key    = 'beers';
-        $beers = $this->cache->getItem($key, $success);
-        if (! $success) {
-            $beers = $this->tableGateway->select()->toArray();
-            $this->cache->setItem($key, $beers);
-        }
+        $beers = $this->tableGateway->select()->toArray();
 
         return new ViewModel(['beers' => $beers]);
 
@@ -39,7 +32,6 @@ class BeerController extends AbstractActionController
         }
 
         $this->tableGateway->delete(['id' => $id]);
-        $this->cache->removeItem('beers');
 
         // return $this->redirect()->toUrl('/beer');
         return $this->redirect()->toRoute('beer',['action' => 'index']);
